@@ -27,25 +27,71 @@ def greedy(bandit, timesteps):
     Q = np.zeros(bandit.n_arms)
     possible_arms = range(bandit.n_arms)
 
-    # TODO: init variables (rewards, n_plays, Q) by playing each arm once
+    # init variables (rewards, n_plays, Q) by playing each arm once
+    # init rewads and Q
+    for arm in possible_arms:
+        rewards[arm] = bandit.play_arm(arm)
+        Q[arm] = rewards[arm] / n_plays [arm]
+        n_plays[arm] += 1
+
 
     # Main loop
     while bandit.total_played < timesteps:
-        # This example shows how to play a random arm:
-        a = random.choice(possible_arms)
-        reward_for_a = bandit.play_arm(a)
-        # TODO: instead do greedy action selection
-        # TODO: update the variables (rewards, n_plays, Q) for the selected arm
+        # instead do greedy action selection
+        arm = np.argmax(Q)  # select "best" action
+        # update the variables (rewards, n_plays, Q) for the selected arm
+        # play best action
+        rewards[arm] += bandit.play_arm(arm)
+        n_plays[arm] += 1
+        # calculate normalized Q
+        Q[arm] = rewards[arm] / n_plays[arm]
+
+
 
 
 def epsilon_greedy(bandit, timesteps):
-    # TODO: epsilon greedy action selection (you can copy your code for greedy as a starting point)
+    # epsilon greedy action selection (you can copy your code for greedy as a starting point)
+    eps = .5 # init epsilon
+
+    rewards = np.zeros(bandit.n_arms)
+    n_plays = np.zeros(bandit.n_arms)
+    Q = np.zeros(bandit.n_arms)
+    possible_arms = range(bandit.n_arms)
+
+    # init variables (rewards, n_plays, Q) by playing each arm once
+    # init rewads and Q
+    for arm in possible_arms:
+        rewards[arm] = bandit.play_arm(arm)
+        Q[arm] = rewards[arm] / n_plays [arm]
+        n_plays[arm] += 1
+
+
+    # Main loop
     while bandit.total_played < timesteps:
-        reward_for_a = bandit.play_arm(0)  # Just play arm 0 as placeholder
+        # instead do greedy action selection
+        arm = np.argmax(Q)  # select "best" action
+        # update the variables (rewards, n_plays, Q) for the selected arm
+        # play best action
+        rewards[arm] += bandit.play_arm(arm)
+        n_plays[arm] += 1
+        # calculate normalized Q
+        Q[arm] = rewards[arm] / n_plays[arm]
+
+
+        if np.random.uniform() > eps: # decide whether to do greedy action or not
+            arm = np.argmax(Q)  # select greedy action
+        else:
+            arm = random.choice(possible_arms) # select random action
+
+        reward = bandit.play_arm(arm)  # play selected action
+        n_plays[arm] += 1
+        rewards[arm] += reward
+        # calculate normalized Q
+        Q[arm] = rewards[arm] / n_plays[arm]
 
 
 def main():
-    n_episodes = 500  # TODO: set to 10000 to decrease noise in plot
+    n_episodes = 10000
     n_timesteps = 1000
     rewards_greedy = np.zeros(n_timesteps)
     rewards_egreedy = np.zeros(n_timesteps)
