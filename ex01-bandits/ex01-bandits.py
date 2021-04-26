@@ -31,9 +31,8 @@ def greedy(bandit, timesteps):
     # init rewads and Q
     for arm in possible_arms:
         rewards[arm] = bandit.play_arm(arm)
-        Q[arm] = rewards[arm] / n_plays [arm]
-        n_plays[arm] += 1
-
+        n_plays[arm] = 1
+        Q[arm] = rewards[arm] / n_plays[arm]
 
     # Main loop
     while bandit.total_played < timesteps:
@@ -47,11 +46,9 @@ def greedy(bandit, timesteps):
         Q[arm] = rewards[arm] / n_plays[arm]
 
 
-
-
 def epsilon_greedy(bandit, timesteps):
     # epsilon greedy action selection (you can copy your code for greedy as a starting point)
-    eps = .5 # init epsilon
+    eps = .5  # init epsilon
 
     rewards = np.zeros(bandit.n_arms)
     n_plays = np.zeros(bandit.n_arms)
@@ -62,43 +59,31 @@ def epsilon_greedy(bandit, timesteps):
     # init rewads and Q
     for arm in possible_arms:
         rewards[arm] = bandit.play_arm(arm)
-        Q[arm] = rewards[arm] / n_plays [arm]
-        n_plays[arm] += 1
-
+        n_plays[arm] = 1
+        Q[arm] = rewards[arm] / n_plays[arm]
 
     # Main loop
     while bandit.total_played < timesteps:
-        # instead do greedy action selection
-        arm = np.argmax(Q)  # select "best" action
-        # update the variables (rewards, n_plays, Q) for the selected arm
-        # play best action
-        rewards[arm] += bandit.play_arm(arm)
-        n_plays[arm] += 1
-        # calculate normalized Q
-        Q[arm] = rewards[arm] / n_plays[arm]
-
-
-        if np.random.uniform() > eps: # decide whether to do greedy action or not
+        if np.random.uniform() > eps:  # decide whether to do greedy action or not
             arm = np.argmax(Q)  # select greedy action
         else:
-            arm = random.choice(possible_arms) # select random action
+            arm = random.choice(possible_arms)  # select random action
 
-        reward = bandit.play_arm(arm)  # play selected action
+        rewards[arm] += bandit.play_arm(arm)  # play selected action
         n_plays[arm] += 1
-        rewards[arm] += reward
         # calculate normalized Q
         Q[arm] = rewards[arm] / n_plays[arm]
 
 
 def main():
-    n_episodes = 10000
+    n_episodes = 500
     n_timesteps = 1000
     rewards_greedy = np.zeros(n_timesteps)
     rewards_egreedy = np.zeros(n_timesteps)
 
     for i in range(n_episodes):
         if i % 100 == 0:
-            print ("current episode: " + str(i))
+            print("current episode: " + str(i))
 
         b = GaussianBandit()  # initializes a random bandit
         greedy(b, n_timesteps)
@@ -111,9 +96,11 @@ def main():
     rewards_greedy /= n_episodes
     rewards_egreedy /= n_episodes
     plt.plot(rewards_greedy, label="greedy")
-    print("Total reward of greedy strategy averaged over " + str(n_episodes) + " episodes: " + str(np.sum(rewards_greedy)))
+    print("Total reward of greedy strategy averaged over " + str(n_episodes) + " episodes: " + str(
+        np.sum(rewards_greedy)))
     plt.plot(rewards_egreedy, label="e-greedy")
-    print("Total reward of epsilon greedy strategy averaged over " + str(n_episodes) + " episodes: " + str(np.sum(rewards_egreedy)))
+    print("Total reward of epsilon greedy strategy averaged over " + str(n_episodes) + " episodes: " + str(
+        np.sum(rewards_egreedy)))
     plt.legend()
     plt.xlabel("Timesteps")
     plt.ylabel("Reward")
