@@ -48,7 +48,7 @@ def greedy(bandit, timesteps):
 
 def epsilon_greedy(bandit, timesteps):
     # epsilon greedy action selection (you can copy your code for greedy as a starting point)
-    eps = .5  # init epsilon
+    eps = .1  # init epsilon
 
     rewards = np.zeros(bandit.n_arms)
     n_plays = np.zeros(bandit.n_arms)
@@ -76,7 +76,7 @@ def epsilon_greedy(bandit, timesteps):
 
 
 def main():
-    n_episodes = 500
+    n_episodes = 10000
     n_timesteps = 1000
     rewards_greedy = np.zeros(n_timesteps)
     rewards_egreedy = np.zeros(n_timesteps)
