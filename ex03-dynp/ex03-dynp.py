@@ -42,7 +42,7 @@ def value_iteration():
             v = V_states[s].copy()
             V_states[s] = np.max(prob_sum(s, gamma, V_states))
             # delta observes if the value function updated
-            delta = max(delta, np.linalg.norm(v - V_states[s]))
+            delta = max(delta, abs(v - V_states[s]))
     print("Number of steps: {}".format(steps))
     print("Optimal value function: {}".format(V_states))
 
