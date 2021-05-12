@@ -76,6 +76,7 @@ def monte_carlo_es():
         eps += 1
         if eps % 100 == 0:
             print(pi)
+            print(eps)
         # choose action and state
         a = env.action_space.sample()
         obs = env.reset()
