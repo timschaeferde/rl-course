@@ -115,7 +115,7 @@ def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
             a = a_
             episode_length += 1
             if done:
-                Q[s_, :] = [0, 0, 0, 0]
+                Q[s_, :] = np.zeros(env.action_space.n)
 
         episode_lengths.append(episode_length)
     # plot average of epsiode length
@@ -144,7 +144,7 @@ def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
             s = s_
             episode_length += 1
             if done:
-                Q[s_, :] = [0, 0, 0, 0]
+                Q[s_, :] = np.zeros(env.action_space.n)
 
         episode_lengths.append(episode_length)
     # plot average of epsiode length
@@ -154,8 +154,8 @@ def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
 
 
 # env = gym.make('FrozenLake-v0')
-env = gym.make('FrozenLake-v0', is_slippery=True)
-# env=gym.make('FrozenLake-v0', map_name="8x8")
+# env = gym.make('FrozenLake-v0', is_slippery=False)
+env=gym.make('FrozenLake-v0', map_name="8x8", is_slippery=False)
 
 print("Running sarsa...")
 Q1 = sarsa(env)
