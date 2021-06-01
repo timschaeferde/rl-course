@@ -4,6 +4,7 @@ from itertools import product
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
 def print_policy(Q, env):
     """ This is a helper function to print a nice policy from the Q function"""
     moves = [u'←', u'↓', u'→', u'↑']
@@ -87,7 +88,7 @@ def plot_Q(Q, env):
 
 
 def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
-    Q = np.zeros((env.observation_space.n, env.action_space.n))
+    Q = np.random.random((env.observation_space.n, env.action_space.n))
     episode_lengths = []
     # This is some starting point performing random walks in the environment:
     for i in range(num_ep):
@@ -102,7 +103,7 @@ def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
             # Take action
             s_, r, done, _ = env.step(a)
             if np.random.uniform() > epsilon:  # decide whether to do greedy action or not
-                a_ = np.argmax(Q[s, :])  # select greedy action
+                a_ = np.argmax(Q[s_, :])  # select greedy action
             else:
                 a_ = env.action_space.sample()  # select random action
 
@@ -113,16 +114,18 @@ def sarsa(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
             s = s_
             a = a_
             episode_length += 1
+            if done:
+                Q[s_, :] = [0, 0, 0, 0]
+
         episode_lengths.append(episode_length)
     # plot average of epsiode length
     plt.figure()
-    pd.DataFrame(episode_lengths, columns=["Episode lengths Sarsa"]).rolling(1000).mean().plot()
+    pd.DataFrame(episode_lengths, columns=["Episode lengths Sarsa"]).rolling(100).mean().plot()
     return Q
 
 
 def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
-    Q = np.zeros((env.observation_space.n, env.action_space.n))
-
+    Q = np.random.random((env.observation_space.n, env.action_space.n))
     episode_lengths = []
     # This is some starting point performing random walks in the environment:
     for i in range(num_ep):
@@ -140,16 +143,18 @@ def qlearning(env, alpha=0.1, gamma=0.9, epsilon=0.1, num_ep=int(1e4)):
             Q[s, a] += alpha * (r + gamma * Q[s_, :].max() - Q[s, a])
             s = s_
             episode_length += 1
+            if done:
+                Q[s_, :] = [0, 0, 0, 0]
+
         episode_lengths.append(episode_length)
     # plot average of epsiode length
     plt.figure()
-    pd.DataFrame(episode_lengths, columns=["Episode lengths Q"]).rolling(1000).mean().plot()
+    pd.DataFrame(episode_lengths, columns=["Episode lengths Q"]).rolling(100).mean().plot()
     return Q
 
 
-
-env = gym.make('FrozenLake-v0')
-# env=gym.make('FrozenLake-v0', is_slippery=False)
+# env = gym.make('FrozenLake-v0')
+env = gym.make('FrozenLake-v0', is_slippery=True)
 # env=gym.make('FrozenLake-v0', map_name="8x8")
 
 print("Running sarsa...")
